@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Motivational Quote</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class'
+  }
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #tsparticles {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-4 relative">
+
+  <div id="tsparticles"></div>
+
+  <div class="w-full max-w-xl text-center">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-6">🌟 Daily Motivational Quote</h1>
+    <div id="quoteBox" class="fade-in text-xl sm:text-2xl font-semibold mb-4">Loading...</div>
+    <div id="authorBox" class="fade-in text-lg mb-6 italic text-gray-600 dark:text-gray-300"></div>
+
+    <div class="space-x-2">
+      <button onclick="showQuote()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow transition">🔄 New Quote</button>
+      <button onclick="toggleLanguage()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow transition">🌐 Translate</button>
+      <button onclick="toggleFavorite()" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-full shadow transition">❤️ Save</button>
+      <button onclick="toggleDarkMode()" class="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-full shadow transition">🌓 Mode</button>
+    </div>
+
+    <p class="mt-6 text-sm">⏰ Costa Rica time: <span id="costarica-time">--:--</span></p>
+
+    <div class="mt-6">
+      <h2 class="text-lg font-semibold mb-2">💖 Your Favorites:</h2>
+      <ul id="favoritesList" class="text-sm text-left list-disc list-inside"></ul>
+    </div>
+  </div>
+
+  <script>
+    const quotes = [
+  {
+    "text": "Believe you can and you're halfway there.",
+    "text_es": "Cree que puedes y ya estás a mitad de camino.",
+    "author": "Theodore Roosevelt"
+  },
+  {
+    "text": "The only way to do great work is to love what you do.",
+    "text_es": "La única forma de hacer un gran trabajo es amar lo que haces.",
+    "author": "Steve Jobs"
+  },
+  {
+    "text": "Success is not the key to happiness. Happiness is the key to success.",
+    "text_es": "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito.",
+    "author": "Albert Schweitzer"
+  },
+  {
+    "text": "Don’t watch the clock; do what it does. Keep going.",
+    "text_es": "No mires el reloj; haz lo que él hace. Sigue adelante.",
+    "author": "Sam Levenson"
+  },
+  {
+    "text": "You are stronger than you think.",
+    "text_es": "Eres más fuerte de lo que piensas.",
+    "author": "Unknown"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Confucius"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Confucius"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Confucius"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Oprah Winfrey"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Nelson Mandela"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Maya Angelou"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Walt Disney"
+  },
+  {
+    "text": "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "text_es": "Mantén tu rostro siempre hacia el sol y las sombras quedarán detrás de ti.",
+    "author": "Mark Twain"
+  },
+  {
+    "text": "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    "text_es": "Lo que está detrás de nosotros y lo que está por delante son pequeñas cosas comparado con lo que está dentro de nosotros.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Act as if what you do makes a difference. It does.",
+    "text_es": "Actúa como si lo que haces marcara la diferencia. Lo hace.",
+    "author": "Albert Einstein"
+  },
+  {
+    "text": "Success is getting what you want. Happiness is wanting what you get.",
+    "text_es": "El éxito es conseguir lo que quieres. La felicidad es querer lo que consigues.",
+    "author": "Confucius"
+  },
+  {
+    "text": "Start where you are. Use what you have. Do what you can.",
+    "text_es": "Empieza donde estás. Usa lo que tienes. Haz lo que puedas.",
+    "author": "Albert Einstein"
+  }
+];
+
+    let currentIndex = 0;
+    let currentLang = 'en';
+    let lastIndex = -1;
+
+    function showQuote() {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * quotes.length);
+      } while (newIndex === lastIndex && quotes.length > 1);
+      lastIndex = newIndex;
+
+      const quote = quotes[newIndex];
+      currentIndex = newIndex;
+      const quoteText = currentLang === 'en' ? quote.text : quote.text_es;
+
+      document.getElementById('quoteBox').textContent = `"${quoteText}"`;
+      document.getElementById('authorBox').textContent = `– ${quote.author}`;
+
+      document.getElementById('quoteBox').classList.remove('fade-in');
+      document.getElementById('authorBox').classList.remove('fade-in');
+      void document.getElementById('quoteBox').offsetWidth;
+      void document.getElementById('authorBox').offsetWidth;
+      document.getElementById('quoteBox').classList.add('fade-in');
+      document.getElementById('authorBox').classList.add('fade-in');
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'es' : 'en';
+      showQuote();
+    }
+
+    function toggleFavorite() {
+      const quote = quotes[currentIndex];
+      const quoteText = (currentLang === 'en' ? quote.text : quote.text_es) + ` – ${quote.author}`;
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (!favorites.includes(quoteText)) {
+        favorites.push(quoteText);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        renderFavorites();
+      } else {
+        alert("✨ This quote is already in your favorites!");
+      }
+    }
+
+    function renderFavorites() {
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      const list = document.getElementById('favoritesList');
+      list.innerHTML = '';
+      favorites.forEach(fav => {
+        const li = document.createElement('li');
+        li.textContent = fav;
+        li.classList.add("cursor-pointer", "hover:text-red-500", "transition");
+        li.onclick = () => {
+          const newFavorites = favorites.filter(f => f !== fav);
+          localStorage.setItem('favorites', JSON.stringify(newFavorites));
+          renderFavorites();
+        };
+        list.appendChild(li);
+      });
+    }
+
+    function toggleDarkMode() {
+      const root = document.documentElement;
+      if (root.classList.contains("dark")) {
+        root.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+      } else {
+        root.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      }
+    }
+      document.documentElement.classList.toggle('dark');
+    }
+
+    function updateCostaRicaTime() {
+      const now = new Date();
+      const costaRicaOffset = -6;
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      const costaRicaTime = new Date(utc + 3600000 * costaRicaOffset);
+      const timeStr = costaRicaTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('costarica-time').textContent = timeStr;
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") document.documentElement.classList.add("dark");
+      renderFavorites();
+      showQuote();
+      updateCostaRicaTime();
+    };
+
+    setInterval(updateCostaRicaTime, 1000);
+
+    tsParticles.load("tsparticles", {
+      fullScreen: { enable: false },
+      background: { color: "transparent" },
+      particles: {
+        number: { value: 80 },
+        size: { value: 2 },
+        move: { enable: true, speed: 0.8 },
+        opacity: { value: 0.4 },
+        color: { value: "#ffffff" },
+      },
+    });
+  </script>
+</body>
+</html>
